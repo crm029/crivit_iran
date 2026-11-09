@@ -1,0 +1,8 @@
+<?php
+declare(strict_types=1);
+require dirname(__DIR__) . '/app/bootstrap.php';
+$slug=trim($_GET['slug']??''); $q=db()->prepare('SELECT * FROM categories WHERE slug=? AND is_active=1'); $q->execute([$slug]); $category=$q->fetch();
+if(!$category){http_response_code(404);exit('دسته‌بندی پیدا نشد.');}
+$stmt=db()->prepare("SELECT p.*, (SELECT image_path FROM product_images WHERE product_id=p.id ORDER BY is_primary DESC,sort_order LIMIT 1) image_path FROM products p JOIN product_categories pc ON pc.product_id=p.id WHERE pc.category_id=? AND p.status='published' ORDER BY p.id DESC");
+$stmt->execute([$category['id']]); $products=$stmt->fetchAll();
+?><!doctype html><html lang="fa" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title><?=e($category['name'])?></title><link rel="stylesheet" href="/assets/style.css"><body><header class="site-header"><a class="brand" href="/">CRIVIT</a><nav><a href="/">خانه</a><a href="/admin/login.php">مدیریت</a></nav></header><main class="container"><h1><?=e($category['name'])?></h1><p><?=e($category['description']??'')?></p><div class="product-grid"><?php foreach($products as $p): ?><article class="product-card"><a href="/product.php?slug=<?=rawurlencode($p['slug'])?>"><?php if($p['image_path']):?><img src="<?=e($p['image_path'])?>" alt="<?=e($p['name'])?>"><?php else:?><div class="image-placeholder">CRIVIT</div><?php endif?><h3><?=e($p['name'])?></h3></a><strong><?=number_format((float)($p['sale_price']??$p['price']))?> تومان</strong></article><?php endforeach ?></div><?php if(!$products):?><p class="empty">در این دسته‌بندی هنوز محصولی منتشر نشده است.</p><?php endif?></main></body></html>
