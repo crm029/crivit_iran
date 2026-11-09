@@ -1,32 +1,29 @@
 # Crivit Iran — Dynamic Sports Store
 
-A database-driven ecommerce platform. Store owners manage the catalog, categories, navigation, homepage content, products, inventory, and orders from the admin dashboard. No product/category catalog is hard-coded in templates.
+A database-driven ecommerce platform. Store owners manage the catalog, categories, navigation, homepage content, products, inventory, and orders from the admin dashboard. Product and category catalogs are not hard-coded in templates.
 
-## Planned stack
+## Stack
 - PHP 8.2+
 - MySQL 8+
-- Server-rendered responsive storefront
-- Session-based admin authentication with password hashing and CSRF protection
+- Responsive RTL storefront
 - PDO prepared statements
-- Local development with PHP built-in server or XAMPP
+- Session-based admin authentication, password hashing and CSRF tokens
 
-## Core data model
-- Categories: unlimited nested categories, image, description, slug, sort order, active state
-- Products: title, slug, description, SKU, price, sale price, stock, status, multiple images
-- Product-category relation: many-to-many
-- Product attributes and attribute values: admin-defined
-- Users, addresses, carts, orders, order items
-- Site settings, navigation items, homepage sections and banners
+## Current implementation
+- Database schema for administrators, nested categories, products, product images, admin-defined attributes, customers, carts, orders, banners, navigation and site settings
+- One-time first-admin setup
+- Administrator login/logout and dashboard
+- Create/list/delete categories; nested parent categories
+- Create/list products, assign multiple categories, upload multiple JPG/PNG/WebP images
+- Database-driven homepage, category listings and product detail pages
 
 ## Local setup
 1. Create a MySQL database and import `database/schema.sql`.
 2. Copy `.env.example` to `.env` and set database credentials.
-3. Configure the web server document root to `public/`.
-4. Open the site and complete the first-admin setup flow (to be implemented before production).
-5. Never commit real secrets or production credentials.
+3. Point the web server document root to `public/`.
+4. Visit `/setup.php` once to create the first administrator.
+5. Sign in at `/admin/login.php`.
+6. Do not expose `.env`, `app/`, or `database/` from the web server. In production, configure the web server so only `public/` is document root.
 
-## Project status
-Foundation stage. Authentication, admin CRUD, storefront, checkout, uploads, tests, and deployment hardening are to be implemented and verified in subsequent commits.
-
-## Security notes
-Do not expose `.env`, `database/`, or private upload files through the web server. Use HTTPS in production, restrict upload MIME types and file sizes, rotate secrets, and configure automated database backups.
+## Important
+This is an active foundation, not a production-ready finished store yet. Product editing/deletion, category editing, customer accounts, cart and checkout, payment gateway, order management, search/filtering, dynamic homepage/banner/navigation settings, automated tests, and deployment hardening remain to be completed and verified. Configure HTTPS, backups, rate limiting, upload limits, and production error logging before launch.
