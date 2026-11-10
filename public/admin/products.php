@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-require dirname(__DIR__,2) . '/app/bootstrap.php'; require_admin();
+require dirname(__DIR__,2) . '/app/bootstrap.php'; require_roles(['manager']);
 $pdo=db(); $error='';
 if ($_SERVER['REQUEST_METHOD']==='POST') {
  csrf_check(); $name=trim($_POST['name']??''); $slug=slugify($_POST['slug']??$name);
