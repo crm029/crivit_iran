@@ -6,8 +6,8 @@ $pdo = db();
 $categories = $pdo->query("SELECT id,name,slug,image_path FROM categories WHERE is_active=1 AND parent_id IS NULL ORDER BY sort_order,name")->fetchAll();
 $products = $pdo->query("SELECT p.id,p.name,p.slug,p.summary,p.price,p.sale_price,p.stock_status,p.is_featured,
     (SELECT pi.image_path FROM product_images pi WHERE pi.product_id=p.id ORDER BY pi.is_primary DESC,pi.sort_order ASC LIMIT 1) AS image_path
-    FROM products p WHERE p.status='published' ORDER BY p.is_featured DESC,p.published_at DESC,p.id DESC LIMIT 16")->fetchAll();
-$siteName = setting('site_name', 'Crivit Iran');
+    FROM products p WHERE p.status='published' ORDER BY p.is_featured DESC,p.published_at DESC,p.id DESC LIMIT 20")->fetchAll();
+$siteName = setting('site_name', 'Crivit Iran');\n$siteLogo = setting('site_logo', '');
 $searchTerm = trim((string)($_GET['q'] ?? ''));
 if ($searchTerm !== '') {
     $stmt = $pdo->prepare("SELECT p.id,p.name,p.slug,p.summary,p.price,p.sale_price,p.stock_status,p.is_featured,
@@ -46,7 +46,7 @@ function renderProducts(array $items): void { ?>
 <body class="storefront">
 <div class="topline"><div class="topline-inner"><span>تجربه‌ای تازه برای خرید تجهیزات ورزشی</span><span>پشتیبانی و پاسخگویی به مشتریان</span></div></div>
 <header class="store-header">
-  <a class="brand" href="/"><span class="brand-mark">C</span><span><?= e($siteName) ?><small>SPORT & OUTDOOR</small></span></a>
+  <a class="brand" href="/"><?php if ($siteLogo): ?><img class="brand-logo" src="<?= e($siteLogo) ?>" alt="<?= e($siteName) ?>"><?php else: ?><span class="brand-mark">C</span><?php endif ?><span><?= e($siteName) ?><small>SPORT & OUTDOOR</small></span></a>
   <form class="search" action="/" method="get"><button aria-label="جستجو">⌕</button><input name="q" placeholder="دنبال چه محصولی می‌گردید؟" value="<?= e($searchTerm) ?>"></form>
   <div class="header-actions"><a href="/admin/login.php" class="account-link"><span class="action-icon">♙</span><span>ورود / عضویت</span></a><a href="/cart.php" class="cart-link"><span class="action-icon">🛒</span><span>سبد خرید</span><b>۰</b></a></div>
 </header>
