@@ -29,11 +29,12 @@ INSERT INTO products (name,slug,sku,summary,description,price,stock_quantity,sto
 ('مچ‌بند ورزشی','sport-wristband','DEMO-019','اکسسوری سبک ورزشی','محصول نمونه نمایشی؛ مشخصات نهایی توسط مدیر فروشگاه تکمیل می‌شود.',190000,22,'in_stock','published',0,NOW()),
 ('کیف ورزشی','sports-duffel-bag','DEMO-020','برای حمل وسایل تمرین','محصول نمونه نمایشی؛ مشخصات نهایی توسط مدیر فروشگاه تکمیل می‌شود.',980000,9,'in_stock','published',0,NOW());
 INSERT INTO product_categories (product_id,category_id)
-SELECT p.id,c.id FROM products p JOIN categories c ON
-((p.id BETWEEN 1 AND 4 AND c.slug='sportswear') OR
- (p.id BETWEEN 5 AND 8 AND c.slug='training-equipment') OR
- (p.id BETWEEN 9 AND 12 AND c.slug='camping-outdoor') OR
- (p.id BETWEEN 13 AND 14 AND c.slug='balls-games') OR
- (p.id BETWEEN 17 AND 18 AND c.slug='shoes-walking') OR
- (p.id IN (15,16,19,20) AND c.slug='accessories'))
+SELECT p.id,c.id FROM products p
+JOIN categories c ON c.slug = CASE
+ WHEN CAST(SUBSTRING(p.sku,6) AS UNSIGNED) BETWEEN 1 AND 4 THEN 'sportswear'
+ WHEN CAST(SUBSTRING(p.sku,6) AS UNSIGNED) BETWEEN 5 AND 8 THEN 'training-equipment'
+ WHEN CAST(SUBSTRING(p.sku,6) AS UNSIGNED) BETWEEN 9 AND 12 THEN 'camping-outdoor'
+ WHEN CAST(SUBSTRING(p.sku,6) AS UNSIGNED) BETWEEN 13 AND 14 THEN 'balls-games'
+ WHEN CAST(SUBSTRING(p.sku,6) AS UNSIGNED) BETWEEN 17 AND 18 THEN 'shoes-walking'
+ ELSE 'accessories' END
 WHERE p.sku LIKE 'DEMO-%';
