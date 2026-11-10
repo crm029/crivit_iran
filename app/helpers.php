@@ -15,6 +15,12 @@ function csrf_check(): void {
 }
 function admin_user(): ?array { return $_SESSION['admin'] ?? null; }
 function require_admin(): void { if (!admin_user()) redirect('/admin/login.php'); }
+function require_roles(array $roles): void {
+    require_admin();
+    $role = (string)(admin_user()['role'] ?? '');
+    if ($role !== 'owner' && !in_array($role, $roles, true)) { http_response_code(403); exit('شما اجازه دسترسی به این بخش را ندارید.'); }
+}
+function is_owner(): bool { return (admin_user()['role'] ?? '') === 'owner'; }
 function slugify(string $value): string {
     $value = trim(mb_strtolower($value, 'UTF-8'));
     $value = preg_replace('/[^\p{L}\p{N}]+/u', '-', $value) ?? '';
