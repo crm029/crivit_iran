@@ -1,0 +1,13 @@
+<?php
+declare(strict_types=1);
+require dirname(__DIR__,2) . '/app/bootstrap.php';
+require_admin();
+if(!is_owner()){http_response_code(404);exit('صفحه پیدا نشد.');}
+$pdo=db();$error='';
+if($_SERVER['REQUEST_METHOD']==='POST'){
+ csrf_check();$name=trim($_POST['name']??'');$email=filter_var(trim($_POST['email']??''),FILTER_VALIDATE_EMAIL);$password=$_POST['password']??'';$role=$_POST['role']??'warehouse';
+ if($name===''||!$email||strlen($password)<12||!in_array($role,['manager','warehouse'],true))$error='اطلاعات را بررسی کنید؛ رمز عبور باید حداقل ۱۲ کاراکتر باشد.';
+ else{try{$q=$pdo->prepare('INSERT INTO admins(name,email,password_hash,role) VALUES(?,?,?,?)');$q->execute([$name,$email,password_hash($password,PASSWORD_DEFAULT),$role]);redirect('/admin/users.php?saved=1');}catch(Throwable $e){$error='ثبت کاربر انجام نشد؛ ایمیل ممکن است تکراری باشد.';}}
+}
+$users=$pdo->query("SELECT id,name,email,role,is_active,last_login_at FROM admins WHERE role IN ('manager','warehouse') ORDER BY id DESC")->fetchAll();
+?><!doctype html><html lang="fa" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>مدیریت کاربران</title><link rel="stylesheet" href="/assets/style.css"><body><main class="admin-wrap"><a href="/admin/dashboard.php">← داشبورد</a><h1>مدیریت کاربران مدیریتی</h1><?php if($error):?><p class="error"><?=e($error)?></p><?php endif?><?php if(isset($_GET['saved'])):?><p class="success">کاربر ساخته شد.</p><?php endif?><section class="panel"><h2>افزودن کاربر</h2><form method="post" class="admin-form"><input type="hidden" name="_csrf" value="<?=e(csrf_token())?>"><label>نام و نام خانوادگی<input name="name" required></label><label>ایمیل ورود<input type="email" name="email" required></label><label>رمز عبور اولیه<input type="password" name="password" minlength="12" required></label><label>نقش<select name="role"><option value="manager">ادمین کل</option><option value="warehouse">انباردار</option></select></label><button class="primary">ایجاد کاربر</button></form></section><section class="panel"><h2>کاربران ثبت‌شده</h2><div class="table-wrap"><table><thead><tr><th>نام</th><th>ایمیل</th><th>نقش</th><th>وضعیت</th><th>آخرین ورود</th></tr></thead><tbody><?php foreach($users as $u):?><tr><td><?=e($u['name'])?></td><td><?=e($u['email'])?></td><td><?=$u['role']==='manager'?'ادمین کل':'انباردار'?></td><td><?=$u['is_active']?'فعال':'غیرفعال'?></td><td><?=e($u['last_login_at']??'—')?></td></tr><?php endforeach?></tbody></table></div></section></main></body></html>
