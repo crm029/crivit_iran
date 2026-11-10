@@ -7,7 +7,8 @@ $categories = $pdo->query("SELECT id,name,slug,image_path FROM categories WHERE 
 $products = $pdo->query("SELECT p.id,p.name,p.slug,p.summary,p.price,p.sale_price,p.stock_status,p.is_featured,
     (SELECT pi.image_path FROM product_images pi WHERE pi.product_id=p.id ORDER BY pi.is_primary DESC,pi.sort_order ASC LIMIT 1) AS image_path
     FROM products p WHERE p.status='published' ORDER BY p.is_featured DESC,p.published_at DESC,p.id DESC LIMIT 20")->fetchAll();
-$siteName = setting('site_name', 'Crivit Iran');\n$siteLogo = setting('site_logo', '');
+$siteName = setting('site_name', 'Crivit Iran');
+$siteLogo = setting('site_logo', '');
 $searchTerm = trim((string)($_GET['q'] ?? ''));
 if ($searchTerm !== '') {
     $stmt = $pdo->prepare("SELECT p.id,p.name,p.slug,p.summary,p.price,p.sale_price,p.stock_status,p.is_featured,
