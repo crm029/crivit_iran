@@ -62,3 +62,5 @@ body.storefront{background:#f9f9f9;color:#2c2d2e}
 .store-footer a,.store-footer p{color:#c1cbd8}
 .footer-copy{border-color:#ffffff22;color:#aab8c9}
 @media(max-width:620px){.hero-banner{border-radius:13px}.hero-copy h1{font-size:27px}.service-strip{border-radius:12px}.product-image{height:178px}.category-tile{border-radius:11px}}
+
+.brand-logo{display:block;max-width:150px;max-height:54px;object-fit:contain}
