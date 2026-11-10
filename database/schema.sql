@@ -6,7 +6,7 @@ CREATE TABLE admins (
   name VARCHAR(120) NOT NULL,
   email VARCHAR(190) NOT NULL UNIQUE,
   password_hash VARCHAR(255) NOT NULL,
-  role ENUM('owner','manager','catalog_manager','order_manager') NOT NULL DEFAULT 'owner',
+  role ENUM('owner','manager','warehouse') NOT NULL DEFAULT 'owner',
   is_active TINYINT(1) NOT NULL DEFAULT 1,
   last_login_at DATETIME NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -168,6 +168,19 @@ CREATE TABLE order_items (
   line_total DECIMAL(14,2) NOT NULL,
   CONSTRAINT fk_order_item_order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
   CONSTRAINT fk_order_item_product FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE inventory_movements (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  product_id BIGINT UNSIGNED NOT NULL,
+  admin_id BIGINT UNSIGNED NOT NULL,
+  movement_type ENUM('in','out','adjustment') NOT NULL,
+  quantity INT UNSIGNED NOT NULL,
+  note VARCHAR(500) NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_inventory_product FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+  CONSTRAINT fk_inventory_admin FOREIGN KEY (admin_id) REFERENCES admins(id) ON DELETE RESTRICT,
+  INDEX idx_inventory_product_date (product_id, created_at)
 ) ENGINE=InnoDB;
 
 CREATE TABLE site_settings (
