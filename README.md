@@ -20,7 +20,7 @@ PHP 8.2+ / MySQL 8+ RTL ecommerce project with a responsive storefront and role-
 - Optional demo catalog: import `database/demo-seed.sql` once after `database/schema.sql` on a fresh database to add 6 categories and 20 sample products
 
 ## Local setup
-1. Create/import the database using `database/schema.sql`.
+1. For a fresh database, import `database/schema.sql`. For an existing database created from the earlier schema, apply `database/migrations/001_warehouse_role_and_inventory.sql`.
 2. Copy `.env.example` to `.env` and configure MySQL credentials.
 3. Configure the web server document root as `public/`.
 4. Open `/setup.php` once to create the private initial owner account.
